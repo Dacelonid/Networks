@@ -30,9 +30,6 @@ class NetworkNode():
 
     
     def persist(self):
-        for line in self.hosts:
-            print (line) 
-            
         with open(self.filename, 'w') as file:
             for line in self.hosts:
                 file.write(line +'\n')

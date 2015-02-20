@@ -40,7 +40,6 @@ class Test(unittest.TestCase):
     def readFromFile(self):
         with open(self.filename, 'r') as file:
             return [line.rstrip('\n') for line in file]
-        file.closed 
 
     def test_persistToFile(self):
         self.objUnderTest.add("192.168.0.1")
@@ -49,6 +48,18 @@ class Test(unittest.TestCase):
         
         fileContents = self.readFromFile()
         self.assertEqual(["192.168.0.1", "192.168.0.2"], fileContents)
+             
+
+    def test_readDataFromPersistedFile(self):
+        self.objUnderTest.add("192.168.0.1")
+        self.objUnderTest.add("192.168.0.2")
+        self.objUnderTest.add("192.168/16")
+        self.objUnderTest.persist()
+        
+        newNetwork = NetworkNode(self.filename) 
+        newNetwork.read()
+        self.assertListEqual(["192.168.0.1","192.168.0.2"], self.objUnderTest.getAllHosts())
+        self.assertListEqual(["192.168/16"], self.objUnderTest.getAllNetworks())
              
 
 if __name__ == "__main__":
