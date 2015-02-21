@@ -40,6 +40,19 @@ class NetworkNode():
             for line in file:
                 self.add(line)
         file.closed
+
+    
+    def getIpPrefix(self, subnet):
+        cidr = str.split(subnet, "/")[1]
+        
+        return "192.168"
+    
+    
+    def getHostsWithinSubnet(self, subnet):
+        ipPrefix = self.getIpPrefix(subnet)
+        return [s for s in self.hosts if ipPrefix in s]
+    
+    
     
     
     

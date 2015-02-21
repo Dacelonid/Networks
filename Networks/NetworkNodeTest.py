@@ -17,10 +17,8 @@ class Test(unittest.TestCase):
         self.objUnderTest = NetworkNode(self.filename) 
 
     def tearDown(self):
-        # if os.path.isfile(self.filename): 
-          #  os.remove(self.filename)
-        pass 
-
+        if os.path.isfile(self.filename): 
+            os.remove(self.filename)
 
     def test_addNode_shouldBeAdded(self):
         self.objUnderTest.add("192.168.0.1")
@@ -61,6 +59,13 @@ class Test(unittest.TestCase):
         self.assertListEqual(["192.168.0.1","192.168.0.2"], self.objUnderTest.getAllHosts())
         self.assertListEqual(["192.168/16"], self.objUnderTest.getAllNetworks())
              
+    def test_findNodesWithinSubNet(self):
+        self.objUnderTest.add("192.168.0.1")
+        self.objUnderTest.add("192.168.0.2")
+        self.objUnderTest.add("10.168.0.2") #should not appear in result list
+        self.objUnderTest.add("192.168/16")
+        self.assertListEqual(["192.168.0.1","192.168.0.2", "10.168.0.2"], self.objUnderTest.getAllHosts())
+        self.assertListEqual(["192.168.0.1", "192.168.0.2"], self.objUnderTest.getHostsWithinSubnet("192.168/16"))
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
