@@ -62,10 +62,16 @@ class Test(unittest.TestCase):
     def test_findNodesWithinSubNet(self):
         self.objUnderTest.add("192.168.0.1")
         self.objUnderTest.add("192.168.0.2")
-        self.objUnderTest.add("10.168.0.2") #should not appear in result list
+        self.objUnderTest.add("10.168.0.2")
         self.objUnderTest.add("192.168/16")
-        self.assertListEqual(["192.168.0.1","192.168.0.2", "10.168.0.2"], self.objUnderTest.getAllHosts())
-        self.assertListEqual(["192.168.0.1", "192.168.0.2"], self.objUnderTest.getHostsWithinSubnet("192.168/16"))
+        self.assertListEqual(["192.168.0.1", "192.168.0.2"], self.objUnderTest.getHostsWithinSubnet("192.168.0/16"))
+        self.assertListEqual(["192.168.0.1", "192.168.0.2", "10.168.0.2"], self.objUnderTest.getHostsWithinSubnet("0.0/0"))
+        
+#     def test_findNodesWithinSubNet2(self):
+#         self.objUnderTest.add("192.168.0.1")
+#         self.objUnderTest.add("192.168.0/16")
+#         self.assertListEqual(["192.168.0.1", "192.168.0.2"], self.objUnderTest.getHostsWithinSubnet("192.168.0.0/16"))
+        
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
