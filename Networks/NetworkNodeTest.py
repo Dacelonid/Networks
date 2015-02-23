@@ -80,7 +80,10 @@ class Test(unittest.TestCase):
         self.assertTrue(self.objUnderTest.isManaged("192.168.0.1"))
     
     def test_findAllNodesWithinSubNet2(self):
-        print(self.objUnderTest.findAllNodesWithinSubNet("255.255.255.252/30"))
+        self.assertEqual(2, len(self.objUnderTest.findAllNodesWithinSubNet("255.255.255.254/31")))
+        self.assertEqual(4, len(self.objUnderTest.findAllNodesWithinSubNet("255.255.255.252/30")))
+        self.assertEqual(16, len(self.objUnderTest.findAllNodesWithinSubNet("255.255.255.240/28")))
+        self.assertEqual(128, len(self.objUnderTest.findAllNodesWithinSubNet("255.255.255.128/25")))
         
 
 if __name__ == "__main__":
