@@ -79,10 +79,8 @@ class Test(unittest.TestCase):
         self.objUnderTest.add("192.168/16")
         self.assertTrue(self.objUnderTest.isManaged("192.168.0.1"))
     
-#     def test_findNodesWithinSubNet2(self):
-#         self.objUnderTest.add("192.168.0.1")
-#         self.objUnderTest.add("192.168.0/16")
-#         self.assertListEqual(["192.168.0.1", "192.168.0.2"], self.objUnderTest.getHostsWithinSubnet("192.168.0.0/16"))
+    def test_findAllNodesWithinSubNet2(self):
+        print(self.objUnderTest.findAllNodesWithinSubNet("192.168.0.0/16"))
         
 
 if __name__ == "__main__":

@@ -10,7 +10,6 @@ class NetworkNode():
     '''
     classdocs
     '''
-
     
     def add(self, ipaddress):
         if "/"  in ipaddress:
@@ -87,5 +86,10 @@ class NetworkNode():
             result =  ipAddress in self.hosts or self.addressInAnyNetwork(ipAddress)
         return result
     
-    
-    
+    def findAllNodesWithinSubNet(self, subnet):
+        netaddr = subnet.split('/')[0]
+        networkPart = struct.unpack('>L',socket.inet_aton(netaddr))[0]
+        hosts = []
+        for x in range(networkPart, 4294967295):
+            hosts.append(socket.inet_ntoa(struct.pack("!I", x)) )
+        return hosts
