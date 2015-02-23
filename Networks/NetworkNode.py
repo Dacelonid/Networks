@@ -90,6 +90,8 @@ class NetworkNode():
         netaddr = subnet.split('/')[0]
         networkPart = struct.unpack('>L',socket.inet_aton(netaddr))[0]
         hosts = []
-        for x in range(networkPart, 4294967295):
-            hosts.append(socket.inet_ntoa(struct.pack("!I", x)) )
+        for x in range(networkPart, 4294967295 + 1):
+            host = socket.inet_ntoa(struct.pack("!I", x))
+            print (host) 
+            hosts.append(host)
         return hosts
