@@ -5,16 +5,14 @@ Created on 20 Feb 2015
 '''
 import unittest
 import os
-from Networks.NetworkNode import NetworkNode
+from Networks.IpAddressManager import IpAddressManager
+from Networks.ManagedAddress import ManagedAddress
+import pickle
 
-
-
-class Test(unittest.TestCase):
-
-
+class IpAddressManagerTest(unittest.TestCase):
     def setUp(self):
         self.filename = "persisted_data"
-        self.objUnderTest = NetworkNode(self.filename) 
+        self.objUnderTest = IpAddressManager(self.filename) 
 
     def tearDown(self):
         if os.path.isfile(self.filename): 
@@ -22,50 +20,48 @@ class Test(unittest.TestCase):
 
     def test_addNode_shouldBeAdded(self):
         self.objUnderTest.add("192.168.0.1")
-        self.assertEqual(["192.168.0.1"], self.objUnderTest.getAllHosts())
+        self.assertEqual([ManagedAddress("192.168.0.1")], self.objUnderTest.getAllManagedNodes())
 
     def test_addMultipleNodes_shouldAllBeAdded(self):
-        for x in range(1,4):
-            self.objUnderTest.add("192.168.0.%d" % (x) )
-        self.assertListEqual(["192.168.0.1","192.168.0.2","192.168.0.3"], self.objUnderTest.getAllHosts())
+        for x in range(1, 4):
+            self.objUnderTest.add("192.168.0.%d" % (x))
+        self.assertListEqual([ManagedAddress("192.168.0.1"), ManagedAddress("192.168.0.2"), ManagedAddress("192.168.0.3")], self.objUnderTest.getAllManagedNodes())
 
     def test_addSubNets_shouldBeAddedToNetworks(self):
         self.objUnderTest.add("192.168/16")
-        self.assertEqual([], self.objUnderTest.getAllHosts())
-        self.assertEqual(["192.168/16"], self.objUnderTest.getAllNetworks())
+        self.assertEqual([ManagedAddress("192.168/16")], self.objUnderTest.getAllManagedNodes())
     
 
     def readFromFile(self):
-        with open(self.filename, 'r') as file:
-            return [line.rstrip('\n') for line in file]
-
+        with open(self.filename, 'rb') as f:  # will close() when we leave this block
+            return pickle.load(f)
+ 
     def test_persistToFile(self):
         self.objUnderTest.add("192.168.0.1")
         self.objUnderTest.add("192.168.0.2")
         self.objUnderTest.persist()
-        
+         
         fileContents = self.readFromFile()
-        self.assertEqual(["192.168.0.1", "192.168.0.2"], fileContents)
-             
-
+        self.assertEqual([ManagedAddress("192.168.0.1"), ManagedAddress("192.168.0.2")], fileContents)
+              
+ 
     def test_readDataFromPersistedFile(self):
         self.objUnderTest.add("192.168.0.1")
         self.objUnderTest.add("192.168.0.2")
         self.objUnderTest.add("192.168/16")
         self.objUnderTest.persist()
-        
-        newNetwork = NetworkNode(self.filename) 
+         
+        newNetwork = IpAddressManager(self.filename) 
         newNetwork.read()
-        self.assertListEqual(["192.168.0.1","192.168.0.2"], self.objUnderTest.getAllHosts())
-        self.assertListEqual(["192.168/16"], self.objUnderTest.getAllNetworks())
+        self.assertListEqual([ManagedAddress("192.168.0.1"), ManagedAddress("192.168.0.2"), ManagedAddress("192.168/16")], self.objUnderTest.getAllManagedNodes())
              
     def test_findNodesWithinSubNet(self):
         self.objUnderTest.add("192.168.0.1")
         self.objUnderTest.add("192.168.0.2")
         self.objUnderTest.add("10.168.0.2")
         self.objUnderTest.add("192.168/16")
-        self.assertListEqual(["192.168.0.1", "192.168.0.2"], self.objUnderTest.getHostsWithinSubnet("192.168.0/16"))
-        self.assertListEqual(["192.168.0.1", "192.168.0.2", "10.168.0.2"], self.objUnderTest.getHostsWithinSubnet("0/0"))
+        self.assertListEqual([ManagedAddress("192.168.0.1"), ManagedAddress("192.168.0.2")], self.objUnderTest.getHostsWithinSubnet(ManagedAddress("192.168.0/16")))
+        self.assertListEqual([ManagedAddress("192.168.0.1"), ManagedAddress("192.168.0.2"), ManagedAddress("10.168.0.2")], self.objUnderTest.getHostsWithinSubnet(ManagedAddress("0/0")))
         
     def test_isHostManaged_checkingExplicitlyAddedHost(self):
         self.objUnderTest.add("192.168.0.1")
@@ -87,5 +83,5 @@ class Test(unittest.TestCase):
         
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
+    # import sys;sys.argv = ['', 'IpAddressManagerTest.testName']
     unittest.main()

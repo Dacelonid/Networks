@@ -1,4 +1,4 @@
-from Networks.AddressUtilities import AddressUtils
+from Networks.AddressUtilities import NetmaskUtils
 class ManagedAddress:
     
     def __init__(self, ipAddr):
@@ -15,9 +15,11 @@ class ManagedAddress:
                 return self.addressInNetwork(self.ipAddr, other.ipAddr)
             else:
                 return self.ipAddr == other.ipAddr
-            
+      
+    def __str__(self):
+        return self.ipAddr      
             
     def addressInNetwork(self, host,subnet):
-        network_addr, masked_ipAddr = AddressUtils.getMaskForNetworkAndHost(host, subnet)
+        network_addr, masked_ipAddr = NetmaskUtils.getMaskForNetworkAndHost(host, subnet)
         return masked_ipAddr == network_addr
             

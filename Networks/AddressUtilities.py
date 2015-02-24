@@ -5,7 +5,7 @@ Created on 23 Feb 2015
 '''
 import socket,struct
 
-class AddressUtils(object):
+class NetmaskUtils(object):
     '''
     classdocs
     '''
@@ -13,7 +13,7 @@ class AddressUtils(object):
     def getHostNetowrkAddrAndNetMask(host, subnet):
         ipaddr = struct.unpack('>L', socket.inet_aton(host))[0]
         netaddr, bits = subnet.split('/')
-        netaddr = AddressUtils.expandNetworkAddrIfNeeded(netaddr)
+        netaddr = NetmaskUtils.expandNetworkAddrIfNeeded(netaddr)
         networkMask = 4294967295 << (32 - int(bits))
         return networkMask, netaddr, ipaddr
 
@@ -29,18 +29,22 @@ class AddressUtils(object):
     
     @staticmethod
     def getMaskForNetworkAndHost(host, subnet):
-        networkMask, netaddr, ipaddr = AddressUtils.getHostNetowrkAddrAndNetMask(host, subnet)
+        networkMask, netaddr, ipaddr = NetmaskUtils.getHostNetowrkAddrAndNetMask(host, subnet)
         networkPart = struct.unpack('>L',socket.inet_aton(netaddr))[0]
         ipaddr_masked = ipaddr & (networkMask)   # Logical AND of IP address and mask will equal the network address if it matches
         return networkPart, ipaddr_masked
     
     @staticmethod
-    def getAllHostsWithinSubnet(subnet):
+    def printAllHostsWithinSubnet(subnet):
         netaddr = subnet.split('/')[0]
         networkPart = struct.unpack('>L', socket.inet_aton(netaddr))[0]
-        hosts = []
         for x in range(networkPart, 4294967295 + 1):
             host = socket.inet_ntoa(struct.pack("!I", x))
-            hosts.append(host)
+            print(host)
         
-        return hosts
+    
+    @staticmethod
+    def howManyHosts(subnet):
+        netaddr = subnet.split('/')[0]
+        networkPart = struct.unpack('>L', socket.inet_aton(netaddr))[0]
+        return 4294967295 + 1 - networkPart
