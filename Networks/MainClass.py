@@ -32,7 +32,9 @@ class MyClass(object):
         while choice != "x":
             if choice == "1":
                 ipAddress = input("which IP Address do you want to add=>>")
-                manager.add(ipAddress)
+                name = input("please enter a note:")
+                manager.add(ipAddress, name)
+                
             elif choice == "2":
                 print (',\n'.join(map(str, manager.getAllManagedNodes())))
             elif choice == "3":
@@ -40,7 +42,7 @@ class MyClass(object):
                 if(NetmaskUtils.howManyHosts(subnet) > 1024):
                     confirm = input("This could result in a large number of hosts, are you sure you want to continue (y/n)=>>")
                     if(confirm == "y"):
-                        NetmaskUtils.printAllHostsWithinSubnet(subnet)
+                        NetmaskUtils.printAllPossibleHostsForSubnetMask(subnet)
             elif choice == "4":
                 manager.persist()
             elif choice == "5":

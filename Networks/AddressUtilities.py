@@ -35,7 +35,7 @@ class NetmaskUtils(object):
         return networkPart, ipaddr_masked
     
     @staticmethod
-    def printAllHostsWithinSubnet(subnet):
+    def printAllPossibleHostsForSubnetMask(subnet):
         netaddr = subnet.split('/')[0]
         networkPart = struct.unpack('>L', socket.inet_aton(netaddr))[0]
         for x in range(networkPart, 4294967295 + 1):

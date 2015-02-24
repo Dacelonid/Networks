@@ -9,8 +9,8 @@ from Networks.ManagedAddress import ManagedAddress
 import pickle
 class IpAddressManager():
     
-    def add(self, ipaddress):
-        self.managedNodes.append(ManagedAddress(ipaddress))
+    def add(self, ipaddress, note):
+        self.managedNodes.append(ManagedAddress(ipaddress, note))
     
     def getAllManagedNodes(self):
         return self.managedNodes
