@@ -39,10 +39,8 @@ class MyClass(object):
                 print (',\n'.join(map(str, manager.getAllManagedNodes())))
             elif choice == "3":
                 subnet = input("which subnet do you want to check=>>")
-                if(NetmaskUtils.howManyHosts(subnet) > 1024):
-                    confirm = input("This could result in a large number of hosts, are you sure you want to continue (y/n)=>>")
-                    if(confirm == "y"):
-                        NetmaskUtils.printAllPossibleHostsForSubnetMask(subnet)
+                lower, upper = NetmaskUtils.getAddressRange(subnet)
+                print("Range: " + str(lower) + " - " + str(upper) + " for " + str(NetmaskUtils.howManyHosts(subnet)) + " hosts")
             elif choice == "4":
                 manager.persist()
             elif choice == "5":

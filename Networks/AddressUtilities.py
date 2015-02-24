@@ -35,16 +35,25 @@ class NetmaskUtils(object):
         return networkPart, ipaddr_masked
     
     @staticmethod
+    def getAddressRange(network):
+        if "/" not in network:
+            raise NameError("Not a valid network specification:" + network + " does not contain an address in CIDR notation")
+        netaddr,bits = network.split('/')
+        netaddr = NetmaskUtils.expandNetworkAddrIfNeeded(netaddr)
+        networkPart = struct.unpack('>L', socket.inet_aton(netaddr))[0]
+        networkMask = 4294967295 << (32 - int(bits))
+        networkLower = networkPart & networkMask
+        return socket.inet_ntoa(struct.pack("!I", networkLower)), socket.inet_ntoa(struct.pack("!I", networkLower + NetmaskUtils.howManyHosts(network)-1))
+    
+    @staticmethod
     def printAllPossibleHostsForSubnetMask(subnet):
         netaddr = subnet.split('/')[0]
         networkPart = struct.unpack('>L', socket.inet_aton(netaddr))[0]
-        for x in range(networkPart, 4294967295 + 1):
-            host = socket.inet_ntoa(struct.pack("!I", x))
-            print(host)
+        for x in range(networkPart, networkPart + NetmaskUtils.howManyHosts(subnet)):
+            print(socket.inet_ntoa(struct.pack("!I", x)))
         
-    
     @staticmethod
     def howManyHosts(subnet):
-        netaddr = subnet.split('/')[0]
-        networkPart = struct.unpack('>L', socket.inet_aton(netaddr))[0]
-        return 4294967295 + 1 - networkPart
+        netaddr,bits = subnet.split('/')
+        hosts = 2 ** (32 - int(bits)) 
+        return hosts
